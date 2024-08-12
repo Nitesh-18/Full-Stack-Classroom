@@ -1,5 +1,5 @@
-import Timetable from "../models/Timetable.js";
-import Classroom from "../models/Classroom.js";
+import {Timetable} from "../models/Timetable.js";
+import {Classroom} from "../models/Classroom.js";
 
 // Create Timetable for a Classroom
 const createTimetable = async (req, res) => {
