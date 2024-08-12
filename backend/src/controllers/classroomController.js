@@ -1,8 +1,8 @@
-import Classroom from "../models/Classroom.js";
-import User from "../models/User.js";
+import {Classroom} from "../models/Classroom.js";
+import {User} from "../models/User.js";
 
 // Create a Classroom
-export const createClassroom = async (req, res) => {
+const createClassroom = async (req, res) => {
   const { name, startTime, endTime, days } = req.body;
 
   try {
@@ -23,7 +23,7 @@ export const createClassroom = async (req, res) => {
 };
 
 // Get all Classrooms
-export const getClassrooms = async (req, res) => {
+const getClassrooms = async (req, res) => {
   try {
     const classrooms = await Classroom.find()
       .populate("teacher")
@@ -35,7 +35,7 @@ export const getClassrooms = async (req, res) => {
 };
 
 // Assign a Teacher to a Classroom
-export const assignTeacher = async (req, res) => {
+const assignTeacher = async (req, res) => {
   const { classroomId, teacherId } = req.body;
 
   try {
@@ -58,7 +58,7 @@ export const assignTeacher = async (req, res) => {
 };
 
 // Assign a Student to a Classroom
-export const assignStudent = async (req, res) => {
+const assignStudent = async (req, res) => {
   const { classroomId, studentId } = req.body;
 
   try {
@@ -79,3 +79,5 @@ export const assignStudent = async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
+
+export { createClassroom, assignStudent, assignTeacher, getClassrooms };

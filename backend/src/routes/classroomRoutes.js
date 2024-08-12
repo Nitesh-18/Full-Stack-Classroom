@@ -5,7 +5,9 @@ import {
   assignTeacher,
   assignStudent,
 } from "../controllers/classroomController.js";
-import auth from "../middleware/authMiddleware.js";
+
+import auth from "../middlewares/authMiddleware.js";
+
 
 const router = express.Router();
 
