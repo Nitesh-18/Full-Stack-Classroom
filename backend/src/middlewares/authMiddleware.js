@@ -1,4 +1,5 @@
-import { verify } from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
+const { verify } = jwt;
 
 const auth = (req, res, next) => {
   const token = req.header("x-auth-token");
