@@ -1,12 +1,11 @@
 import Classroom from "../models/Classroom.js";
 import User from "../models/User.js";
 
-// Create Classroom
+// Create a Classroom
 export const createClassroom = async (req, res) => {
   const { name, startTime, endTime, days } = req.body;
 
   try {
-    // Create the classroom
     const classroom = new Classroom({
       name,
       startTime,
@@ -15,36 +14,68 @@ export const createClassroom = async (req, res) => {
     });
 
     await classroom.save();
-    res.status(201).json(classroom);
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error });
+    res
+      .status(201)
+      .json({ message: "Classroom created successfully", classroom });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
-// Assign Teacher to Classroom
+// Get all Classrooms
+export const getClassrooms = async (req, res) => {
+  try {
+    const classrooms = await Classroom.find()
+      .populate("teacher")
+      .populate("students");
+    res.status(200).json(classrooms);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// Assign a Teacher to a Classroom
 export const assignTeacher = async (req, res) => {
-  const { teacherId, classroomId } = req.body;
+  const { classroomId, teacherId } = req.body;
 
   try {
-    const teacher = await User.findById(teacherId);
     const classroom = await Classroom.findById(classroomId);
-
-    if (!teacher || !classroom) {
-      return res
-        .status(404)
-        .json({ message: "Teacher or Classroom not found" });
-    }
+    const teacher = await User.findById(teacherId);
 
     if (teacher.role !== "Teacher") {
       return res.status(400).json({ message: "User is not a teacher" });
     }
 
-    // Assign the teacher
-    classroom.teacher = teacherId;
+    classroom.teacher = teacher;
     await classroom.save();
 
-    res.json({ message: "Teacher assigned to classroom", classroom });
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error });
+    res
+      .status(200)
+      .json({ message: "Teacher assigned successfully", classroom });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// Assign a Student to a Classroom
+export const assignStudent = async (req, res) => {
+  const { classroomId, studentId } = req.body;
+
+  try {
+    const classroom = await Classroom.findById(classroomId);
+    const student = await User.findById(studentId);
+
+    if (student.role !== "Student") {
+      return res.status(400).json({ message: "User is not a student" });
+    }
+
+    classroom.students.push(student);
+    await classroom.save();
+
+    res
+      .status(200)
+      .json({ message: "Student assigned successfully", classroom });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
