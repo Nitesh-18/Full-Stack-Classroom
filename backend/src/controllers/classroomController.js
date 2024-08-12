@@ -1,5 +1,5 @@
-import {Classroom} from "../models/Classroom.js";
-import {User} from "../models/User.js";
+import { Classroom } from "../models/Classroom.js";
+import { User } from "../models/User.js";
 
 // Create a Classroom
 const createClassroom = async (req, res) => {
@@ -26,9 +26,9 @@ const createClassroom = async (req, res) => {
 const getClassrooms = async (req, res) => {
   try {
     const classrooms = await Classroom.find()
-      .populate("teacher")
+      .populate("teacherId")
       .populate("students");
-    res.status(200).json(classrooms);
+    res.json(classrooms);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
@@ -46,7 +46,7 @@ const assignTeacher = async (req, res) => {
       return res.status(400).json({ message: "User is not a teacher" });
     }
 
-    classroom.teacher = teacher;
+    classroom.teacherId = teacher;
     await classroom.save();
 
     res
@@ -65,11 +65,24 @@ const assignStudent = async (req, res) => {
     const classroom = await Classroom.findById(classroomId);
     const student = await User.findById(studentId);
 
+    if (!classroom) {
+      return res.status(404).json({ message: "Classroom not found" });
+    }
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
     if (student.role !== "Student") {
       return res.status(400).json({ message: "User is not a student" });
     }
 
-    classroom.students.push(student);
+    // Initialize the students array if it doesn't exist
+    if (!classroom.students) {
+      classroom.students = [];
+    };
+
+    classroom.students.push(student._id);
     await classroom.save();
 
     res
