@@ -9,26 +9,42 @@ const PrincipalDashboard = () => {
   const [endTime, setEndTime] = useState("");
   const [days, setDays] = useState([]);
   const [selectedTeacher, setSelectedTeacher] = useState("");
+  const [selectedClassroom, setSelectedClassroom] = useState("");
   const [classrooms, setClassrooms] = useState([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("/api/users");
-        setTeachers(response.data.filter((user) => user.role === "Teacher"));
-        setStudents(response.data.filter((user) => user.role === "Student"));
+        const response = await axios.get("/api/users/getusers");
+        console.log("Full response object:", response); // Log the full response to inspect its structure
+        console.log("Users fetched:", response.data); // Log the data field
+
+        // Ensure response.data is an array
+        if (Array.isArray(response.data)) {
+          setTeachers(response.data.filter((user) => user.role === "Teacher"));
+          setStudents(response.data.filter((user) => user.role === "Student"));
+        } else {
+          throw new Error("Unexpected data format for users");
+        }
       } catch (error) {
         console.error("There was an error fetching users!", error);
       }
     };
+
     const fetchClassrooms = async () => {
       try {
-        const response = await axios.get("/api/classrooms");
-        setClassrooms(response.data);
+        const response = await axios.get("/api/classrooms/");
+        console.log("Classrooms fetched:", response.data); // Check if data is an array
+        if (Array.isArray(response.data)) {
+          setClassrooms(response.data);
+        } else {
+          throw new Error("Unexpected data format for classrooms");
+        }
       } catch (error) {
         console.error("There was an error fetching classrooms!", error);
       }
     };
+
     fetchUsers();
     fetchClassrooms();
   }, []);
@@ -42,6 +58,7 @@ const PrincipalDashboard = () => {
         endTime,
         days,
       });
+      console.log("Classroom created:", response.data); // Debugging
       setClassrooms([...classrooms, response.data]);
       setClassroomName("");
       setStartTime("");
@@ -56,10 +73,12 @@ const PrincipalDashboard = () => {
     e.preventDefault();
     try {
       await axios.post("/api/classrooms/assign-teacher", {
-        classroomId: selectedTeacher,
+        classroomId: selectedClassroom,
         teacherId: selectedTeacher,
       });
+      console.log("Teacher assigned successfully"); // Debugging
       setSelectedTeacher("");
+      setSelectedClassroom("");
     } catch (error) {
       console.error("There was an error assigning the teacher!", error);
     }
@@ -68,9 +87,18 @@ const PrincipalDashboard = () => {
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Teachers</h2>
-      {/* Display teachers in a table */}
+      <ul>
+        {teachers.map((teacher) => (
+          <li key={teacher._id}>{teacher.name}</li>
+        ))}
+      </ul>
+
       <h2 className="text-xl font-bold mb-4">Students</h2>
-      {/* Display students in a table */}
+      <ul>
+        {students.map((student) => (
+          <li key={student._id}>{student.name}</li>
+        ))}
+      </ul>
 
       <h2 className="text-xl font-bold mb-4">Create Classroom</h2>
       <form onSubmit={handleCreateClassroom}>
@@ -120,8 +148,8 @@ const PrincipalDashboard = () => {
           ))}
         </select>
         <select
-          value={selectedTeacher}
-          onChange={(e) => setSelectedTeacher(e.target.value)}
+          value={selectedClassroom}
+          onChange={(e) => setSelectedClassroom(e.target.value)}
           required
         >
           <option value="">Select Classroom</option>
