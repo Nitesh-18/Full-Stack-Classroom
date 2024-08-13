@@ -93,4 +93,26 @@ const assignStudent = async (req, res) => {
   }
 };
 
-export { createClassroom, assignStudent, assignTeacher, getClassrooms };
+const classroomDataFetch = async (req, res) => {
+  try {
+    const teacherId = req.user.id; // Assuming `authMiddleware` adds the logged-in user's id to `req.user`
+
+    // Find the classroom assigned to this teacher
+    const classroom = await Classroom.findOne({ teacherId }).populate("teacherId", "name");
+
+    if (!classroom) {
+      return res.status(404).json({ message: "No classroom assigned to this teacher" });
+    }
+
+    // Find all students in this classroom
+    const students = await User.find({ role: "Student", classroomId: classroom._id }, "name age");
+
+    res.json({ classroom, students });
+  } catch (error) {
+    console.error("Error fetching classroom and students:", error);
+    res.status(500).json({ message: "Server error" });
+  };
+};
+
+
+export { createClassroom, assignStudent, assignTeacher, getClassrooms , classroomDataFetch};

@@ -7,6 +7,7 @@ import classroomRoutes from './routes/classroomRoutes.js';
 import timetableRoutes from './routes/timetableRoutes.js';
 import { getAllUsers } from "./controllers/userController.js";
 import userRoutes from "./routes/userRoutes.js";
+import studentRoutes from "./routes/studentRoutes.js";
 
 const app = express();
 
@@ -32,6 +33,8 @@ app.use("/api/classrooms", classroomRoutes); // <-- Added classroom routes
 app.use("/api/timetable", timetableRoutes); // Timetable Routes
 
 app.use("/api/users", userRoutes); // To fetch All users
+
+app.use("/api/users", studentRoutes); 
 
 app.get("/api/protected", auth, (req, res) => {
   res.json({
