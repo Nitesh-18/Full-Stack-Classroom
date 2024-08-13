@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 
 const PrincipalDashboard = () => {
@@ -14,48 +15,72 @@ const PrincipalDashboard = () => {
   const [newTeacherName, setNewTeacherName] = useState("");
   const [newTeacherEmail, setNewTeacherEmail] = useState("");
   const [newTeacherPassword, setNewTeacherPassword] = useState("");
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const token = localStorage.getItem("authToken");
-        const response = await axios.get("/api/users/getusers", {
-          headers: {
-            "x-auth-token": token,
-          },
-        });
-        if (Array.isArray(response.data)) {
-          setTeachers(response.data.filter((user) => user.role === "Teacher"));
-          setStudents(response.data.filter((user) => user.role === "Student"));
-        } else {
-          throw new Error("Unexpected data format for users");
-        }
-      } catch (error) {
-        console.error("There was an error fetching users!", error);
-      }
-    };
-
-    const fetchClassrooms = async () => {
-      try {
-        const token = localStorage.getItem("authToken");
-        const response = await axios.get("/api/classrooms/", {
-          headers: {
-            "x-auth-token": token,
-          },
-        });
-        if (Array.isArray(response.data)) {
-          setClassrooms(response.data);
-        } else {
-          throw new Error("Unexpected data format for classrooms");
-        }
-      } catch (error) {
-        console.error("There was an error fetching classrooms!", error);
-      }
-    };
-
-    fetchUsers();
-    fetchClassrooms();
+    const storedToken = localStorage.getItem("authToken");
+    if (storedToken) {
+      setToken(storedToken);
+    } else {
+      // If token is not present, redirect to login page
+      window.location.href = "/";
+    }
   }, []);
+
+  // ...
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    window.location.href = "/";
+  };
+
+  useEffect(() => {
+    if (token) {
+      const fetchUsers = async () => {
+        try {
+          const response = await axios.get("/api/users/getusers", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (Array.isArray(response.data)) {
+            const teachers = response.data.filter(
+              (user) => user.role === "Teacher"
+            );
+            const students = response.data.filter(
+              (user) => user.role === "Student"
+            );
+            setTeachers(teachers);
+            setStudents(students);
+          } else {
+            throw new Error("Unexpected data format for users");
+          }
+        } catch (error) {
+          console.error("There was an error fetching users!", error);
+        }
+      };
+
+      const fetchClassrooms = async () => {
+        try {
+          const response = await axios.get("/api/classrooms/", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (Array.isArray(response.data)) {
+            setClassrooms(response.data);
+          } else {
+            throw new Error("Unexpected data format for classrooms");
+          }
+        } catch (error) {
+          console.error("There was an error fetching classrooms!", error);
+        }
+      };
+
+      fetchUsers();
+      fetchClassrooms();
+    }
+  }, [token]);
 
   const handleCreateClassroom = async (e) => {
     e.preventDefault();
@@ -71,7 +96,7 @@ const PrincipalDashboard = () => {
         },
         {
           headers: {
-            "x-auth-token": token,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -80,6 +105,7 @@ const PrincipalDashboard = () => {
       setStartTime("");
       setEndTime("");
       setDays([]);
+      toast.success("Classroom created successfully!");
     } catch (error) {
       console.error("There was an error creating the classroom!", error);
     }
@@ -98,7 +124,7 @@ const PrincipalDashboard = () => {
         },
         {
           headers: {
-            "x-auth-token": token,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -106,6 +132,7 @@ const PrincipalDashboard = () => {
       setNewTeacherName("");
       setNewTeacherEmail("");
       setNewTeacherPassword("");
+      toast.success("Teacher created successfully!");
     } catch (error) {
       if (error.response) {
         console.error("Server error:", error.response.data);
@@ -129,21 +156,16 @@ const PrincipalDashboard = () => {
         },
         {
           headers: {
-            "x-auth-token": token,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
       setSelectedTeacher("");
       setSelectedClassroom("");
+      toast.success("Teacher assigned to classroom successfully!");
     } catch (error) {
       console.error("There was an error assigning the teacher!", error);
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    // Redirect or update state as needed
-    // For example: window.location.href = "/login"; or similar
   };
 
   return (

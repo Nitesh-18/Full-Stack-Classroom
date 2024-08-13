@@ -34,7 +34,7 @@ const registerUser = async (req, res) => {
       },
     };
 
-     jwt.sign(
+    jwt.sign(
       payload,
       process.env.JWT_SECRET,
       { expiresIn: "1h" },
@@ -45,10 +45,11 @@ const registerUser = async (req, res) => {
     );
   } catch (error) {
     console.error(error.message);
-    res.status(500).cookie("accessToken",token).send("Server error");
+    res.status(500).cookie("accessToken", token).send("Server error");
   }
 };
 
+// Login Function
 // Login Function
 const loginUser = async (req, res) => {
   const errors = validationResult(req);
@@ -84,14 +85,22 @@ const loginUser = async (req, res) => {
       { expiresIn: "1h" },
       (err, token) => {
         if (err) throw err;
-        res.json({ token });
+        res.json({
+          token,
+          user: {
+            id: user.id,
+            role: user.role,
+            email: user.email,
+            name: user.name,
+          },
+        });
       }
     );
     const refreshToken = user.generateRefreshToken();
   } catch (error) {
     console.error(error.message);
-    res.status(500).cookie("refreshToken",refreshToken).send("Server error");
-  };
+    res.status(500).cookie("refreshToken", refreshToken).send("Server error");
+  }
 };
 
 export { registerUser, loginUser };

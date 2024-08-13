@@ -4,23 +4,23 @@ import axios from "axios";
 const Login = ({ setUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null); // Add an error state
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post("/api/auth/login", { email, password });
-      const { token, user } = response.data; // Ensure the token and user data are returned in response.data
+      const { token, user } = response.data;
 
-      if (token) {
-        localStorage.setItem("authToken", token); // Store the token in local storage
-        setUser(user); // Store the logged-in user in state
+      if (token && user) {
+        localStorage.setItem("authToken", token);
+        setUser(user); // Set the user data in state
       } else {
-        console.error("No token received from the server.");
-        // Handle the case where no token is received
+        throw new Error("No token or user data received from the server");
       }
     } catch (error) {
+      setError(error.message); // Set the error message
       console.error("Login error", error);
-      // Handle login error, e.g., show a message to the user
     }
   };
 
@@ -63,6 +63,11 @@ const Login = ({ setUser }) => {
             required
           />
         </div>
+        {error && (
+          <div className="text-red-500 mb-4">
+            <p>{error}</p>
+          </div>
+        )}
         <div className="flex items-center justify-between">
           <button
             type="submit"
