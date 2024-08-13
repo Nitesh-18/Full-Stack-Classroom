@@ -59,7 +59,7 @@ userSchema.methods.generateRefreshToken = function () {
         expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
       }
     );
-    console.log("Refresh token generated successfully:", token);
+    // console.log("Refresh token generated successfully:", token);
     return token;
   } catch (error) {
     console.error("Error generating refresh token:", error);

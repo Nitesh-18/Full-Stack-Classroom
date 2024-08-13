@@ -9,7 +9,15 @@ const Login = ({ setUser }) => {
     e.preventDefault();
     try {
       const response = await axios.post("/api/auth/login", { email, password });
-      setUser(response.data); // Store the logged-in user
+      const { token, user } = response.data; // Ensure the token and user data are returned in response.data
+
+      if (token) {
+        localStorage.setItem("authToken", token); // Store the token in local storage
+        setUser(user); // Store the logged-in user in state
+      } else {
+        console.error("No token received from the server.");
+        // Handle the case where no token is received
+      }
     } catch (error) {
       console.error("Login error", error);
       // Handle login error, e.g., show a message to the user

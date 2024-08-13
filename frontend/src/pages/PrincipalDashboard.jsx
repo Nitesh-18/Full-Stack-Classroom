@@ -11,11 +11,19 @@ const PrincipalDashboard = () => {
   const [selectedTeacher, setSelectedTeacher] = useState("");
   const [selectedClassroom, setSelectedClassroom] = useState("");
   const [classrooms, setClassrooms] = useState([]);
+  const [newTeacherName, setNewTeacherName] = useState("");
+  const [newTeacherEmail, setNewTeacherEmail] = useState("");
+  const [newTeacherPassword, setNewTeacherPassword] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("/api/users/getusers");
+        const token = localStorage.getItem("authToken");
+        const response = await axios.get("/api/users/getusers", {
+          headers: {
+            "x-auth-token": token,
+          },
+        });
         if (Array.isArray(response.data)) {
           setTeachers(response.data.filter((user) => user.role === "Teacher"));
           setStudents(response.data.filter((user) => user.role === "Student"));
@@ -29,7 +37,12 @@ const PrincipalDashboard = () => {
 
     const fetchClassrooms = async () => {
       try {
-        const response = await axios.get("/api/classrooms/");
+        const token = localStorage.getItem("authToken");
+        const response = await axios.get("/api/classrooms/", {
+          headers: {
+            "x-auth-token": token,
+          },
+        });
         if (Array.isArray(response.data)) {
           setClassrooms(response.data);
         } else {
@@ -47,12 +60,21 @@ const PrincipalDashboard = () => {
   const handleCreateClassroom = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/classrooms/create", {
-        name: classroomName,
-        startTime,
-        endTime,
-        days,
-      });
+      const token = localStorage.getItem("authToken");
+      const response = await axios.post(
+        "/api/classrooms/create",
+        {
+          name: classroomName,
+          startTime,
+          endTime,
+          days,
+        },
+        {
+          headers: {
+            "x-auth-token": token,
+          },
+        }
+      );
       setClassrooms([...classrooms, response.data]);
       setClassroomName("");
       setStartTime("");
@@ -63,18 +85,65 @@ const PrincipalDashboard = () => {
     }
   };
 
+  const handleCreateTeacher = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.post(
+        "/api/users/create-teacher",
+        {
+          name: newTeacherName,
+          email: newTeacherEmail,
+          password: newTeacherPassword,
+        },
+        {
+          headers: {
+            "x-auth-token": token,
+          },
+        }
+      );
+      setTeachers([...teachers, response.data]);
+      setNewTeacherName("");
+      setNewTeacherEmail("");
+      setNewTeacherPassword("");
+    } catch (error) {
+      if (error.response) {
+        console.error("Server error:", error.response.data);
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+      } else {
+        console.error("Error:", error.message);
+      }
+    }
+  };
+
   const handleAssignTeacher = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/classrooms/assign-teacher", {
-        classroomId: selectedClassroom,
-        teacherId: selectedTeacher,
-      });
+      const token = localStorage.getItem("authToken");
+      await axios.post(
+        "/api/classrooms/assign-teacher",
+        {
+          classroomId: selectedClassroom,
+          teacherId: selectedTeacher,
+        },
+        {
+          headers: {
+            "x-auth-token": token,
+          },
+        }
+      );
       setSelectedTeacher("");
       setSelectedClassroom("");
     } catch (error) {
       console.error("There was an error assigning the teacher!", error);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    // Redirect or update state as needed
+    // For example: window.location.href = "/login"; or similar
   };
 
   return (
@@ -146,7 +215,9 @@ const PrincipalDashboard = () => {
               type="text"
               placeholder="Days (e.g., Monday, Tuesday)"
               value={days.join(", ")}
-              onChange={(e) => setDays(e.target.value.split(", "))}
+              onChange={(e) =>
+                setDays(e.target.value.split(", ").map((day) => day.trim()))
+              }
               required
               className="w-full p-2 border rounded-md"
             />
@@ -156,6 +227,51 @@ const PrincipalDashboard = () => {
             className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
           >
             Create Classroom
+          </button>
+        </form>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Create Teacher</h2>
+        <form
+          onSubmit={handleCreateTeacher}
+          className="bg-white p-6 rounded-lg shadow-md space-y-4"
+        >
+          <div>
+            <input
+              type="text"
+              placeholder="Name"
+              value={newTeacherName}
+              onChange={(e) => setNewTeacherName(e.target.value)}
+              required
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+          <div>
+            <input
+              type="email"
+              placeholder="Email"
+              value={newTeacherEmail}
+              onChange={(e) => setNewTeacherEmail(e.target.value)}
+              required
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+          <div>
+            <input
+              type="password"
+              placeholder="Password"
+              value={newTeacherPassword}
+              onChange={(e) => setNewTeacherPassword(e.target.value)}
+              required
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+          >
+            Create Teacher
           </button>
         </form>
       </div>
@@ -200,12 +316,19 @@ const PrincipalDashboard = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-green-500 text-white p-2 rounded-md hover:bg-green-600"
+            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
           >
             Assign Teacher
           </button>
         </form>
       </div>
+
+      <button
+        onClick={handleLogout}
+        className="mt-8 w-full bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
+      >
+        Logout
+      </button>
     </div>
   );
 };

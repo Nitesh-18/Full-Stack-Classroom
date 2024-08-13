@@ -5,7 +5,6 @@ import authRoutes from "./routes/authRoutes.js";
 import auth from "./middlewares/authMiddleware.js";
 import classroomRoutes from './routes/classroomRoutes.js';
 import timetableRoutes from './routes/timetableRoutes.js';
-import { getAllUsers } from "./controllers/userController.js";
 import userRoutes from "./routes/userRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import teacherRoutes from "./routes/teacherRoutes.js";
@@ -29,17 +28,17 @@ app.use(cookieParser());
 // Define Routes
 app.use("/api/auth", authRoutes); // <-- Added auth routes
 
-app.use("/api/classrooms", classroomRoutes); // <-- Added classroom routes
+app.use("/api/classrooms",auth, classroomRoutes); // <-- Added classroom routes
 
-app.use("/api/timetable", timetableRoutes); // Timetable Routes
+app.use("/api/timetable",auth, timetableRoutes); // Timetable Routes
 
-app.use("/api/users", userRoutes); // To fetch All users
+app.use("/api/users",auth, userRoutes); // To fetch All users
 
-app.use("/api/users", studentRoutes); 
+app.use("/api/users",auth, studentRoutes); 
 
-app.use("/api/users", teacherRoutes); 
+app.use("/api/users",auth, teacherRoutes); 
 
-app.get("/api/protected", auth, (req, res) => {
+app.get("/api/protected",auth, (req, res) => {
   res.json({
     message: `Hello ${req.user.role}, you have accessed a protected route!`,
   });
