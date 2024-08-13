@@ -384,17 +384,20 @@ const PrincipalDashboard = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 bg-gray-100 rounded-md shadow-md">
-      <h1 className="text-2xl font-bold mb-6 text-center">
+    <div className="container mx-auto p-6 bg-gray-50 rounded-md shadow-lg">
+      <h1 className="text-3xl font-bold mb-8 text-center text-blue-700">
         Principal Dashboard
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
-          <h2 className="text-xl font-semibold mb-4">Teachers</h2>
-          <ul className="bg-white p-4 rounded-lg shadow">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Teachers</h2>
+          <ul className="bg-white p-6 rounded-lg shadow-lg space-y-4">
             {teachers.map((teacher) => (
-              <li key={teacher._id} className="border-b py-2">
+              <li
+                key={teacher._id}
+                className="border p-4 rounded-lg bg-gray-100 hover:bg-gray-200"
+              >
                 {teacher.name}{" "}
                 {teacher.classroomId
                   ? `(${
@@ -409,10 +412,13 @@ const PrincipalDashboard = () => {
         </div>
 
         <div>
-          <h2 className="text-xl font-semibold mb-4">Students</h2>
-          <ul className="bg-white p-4 rounded-lg shadow">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Students</h2>
+          <ul className="bg-white p-6 rounded-lg shadow-lg space-y-4">
             {students.map((student) => (
-              <li key={student._id} className="border-b py-2">
+              <li
+                key={student._id}
+                className="border p-4 rounded-lg bg-gray-100 hover:bg-gray-200"
+              >
                 {student.name}
               </li>
             ))}
@@ -420,11 +426,13 @@ const PrincipalDashboard = () => {
         </div>
       </div>
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Create Classroom</h2>
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+          Create Classroom
+        </h2>
         <form
           onSubmit={handleCreateClassroom}
-          className="bg-white p-6 rounded-lg shadow-md space-y-4"
+          className="bg-white p-8 rounded-lg shadow-lg space-y-6"
         >
           <div>
             <input
@@ -433,7 +441,7 @@ const PrincipalDashboard = () => {
               value={classroomName}
               onChange={(e) => setClassroomName(e.target.value)}
               required
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border rounded-lg"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -443,7 +451,7 @@ const PrincipalDashboard = () => {
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
               required
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border rounded-lg"
             />
             <input
               type="time"
@@ -451,7 +459,7 @@ const PrincipalDashboard = () => {
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
               required
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border rounded-lg"
             />
           </div>
           <div>
@@ -463,23 +471,25 @@ const PrincipalDashboard = () => {
                 setDays(e.target.value.split(", ").map((day) => day.trim()))
               }
               required
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border rounded-lg"
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-lg hover:from-blue-600 hover:to-indigo-700"
           >
             Create Classroom
           </button>
         </form>
       </div>
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Create Teacher</h2>
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+          Create Teacher
+        </h2>
         <form
           onSubmit={handleCreateTeacher}
-          className="bg-white p-6 rounded-lg shadow-md space-y-4"
+          className="bg-white p-8 rounded-lg shadow-lg space-y-6"
         >
           <div>
             <input
@@ -488,7 +498,7 @@ const PrincipalDashboard = () => {
               value={newTeacherName}
               onChange={(e) => setNewTeacherName(e.target.value)}
               required
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border rounded-lg"
             />
           </div>
           <div>
@@ -498,7 +508,7 @@ const PrincipalDashboard = () => {
               value={newTeacherEmail}
               onChange={(e) => setNewTeacherEmail(e.target.value)}
               required
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border rounded-lg"
             />
           </div>
           <div>
@@ -508,32 +518,32 @@ const PrincipalDashboard = () => {
               value={newTeacherPassword}
               onChange={(e) => setNewTeacherPassword(e.target.value)}
               required
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border rounded-lg"
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-lg hover:from-blue-600 hover:to-indigo-700"
           >
             Create Teacher
           </button>
         </form>
       </div>
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">
           Assign Teacher to Classroom
         </h2>
         <form
           onSubmit={handleAssignTeacher}
-          className="bg-white p-6 rounded-lg shadow-md space-y-4"
+          className="bg-white p-8 rounded-lg shadow-lg space-y-6"
         >
           <div>
             <select
               value={selectedTeacher}
               onChange={(e) => setSelectedTeacher(e.target.value)}
               required
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border rounded-lg"
             >
               <option value="">Select Teacher</option>
               {teachers.map((teacher) => (
@@ -548,7 +558,7 @@ const PrincipalDashboard = () => {
               value={selectedClassroom}
               onChange={(e) => setSelectedClassroom(e.target.value)}
               required
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border rounded-lg"
             >
               <option value="">Select Classroom</option>
               {classrooms.map((classroom) => (
@@ -560,18 +570,20 @@ const PrincipalDashboard = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-lg hover:from-blue-600 hover:to-indigo-700"
           >
             Assign Teacher
           </button>
         </form>
       </div>
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Update/Delete Student</h2>
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+          Update/Delete Student
+        </h2>
         <form
           onSubmit={handleUpdateStudent}
-          className="bg-white p-6 rounded-lg shadow-md space-y-4"
+          className="bg-white p-8 rounded-lg shadow-lg space-y-6"
         >
           <div>
             <select
@@ -582,7 +594,7 @@ const PrincipalDashboard = () => {
                 )
               }
               required
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border rounded-lg"
             >
               <option value="">Select Student</option>
               {students.map((student) => (
@@ -593,7 +605,7 @@ const PrincipalDashboard = () => {
             </select>
           </div>
           {selectedStudent && (
-            <div>
+            <div className="space-y-4">
               <input
                 type="text"
                 placeholder="Name"
@@ -605,7 +617,7 @@ const PrincipalDashboard = () => {
                   })
                 }
                 required
-                className="w-full p-2 border rounded-md"
+                className="w-full p-3 border rounded-lg"
               />
               <input
                 type="email"
@@ -618,17 +630,18 @@ const PrincipalDashboard = () => {
                   })
                 }
                 required
-                className="w-full p-2 border rounded-md"
+                className="w-full p-3 border rounded-lg"
               />
               <button
                 type="submit"
-                className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+                className="w-full bg-gradient-to-r from-green-500 to-teal-600 text-white p-3 rounded-lg hover:from-green-600 hover:to-teal-700"
               >
                 Update Student
               </button>
               <button
-                onClick={handleDeleteStudent}
-                className="w-full bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
+                type="button"
+                onClick={() => handleDeleteStudent(selectedStudent._id)}
+                className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white p-3 rounded-lg hover:from-red-600 hover:to-pink-700"
               >
                 Delete Student
               </button>
@@ -638,100 +651,15 @@ const PrincipalDashboard = () => {
       </div>
 
       <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Update/Delete Teacher</h2>
-        <form
-          onSubmit={handleUpdateTeacher}
-          className="bg-white p-6 rounded-lg shadow-md space-y-4"
+        <button
+          onClick={handleLogout}
+          className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white p-3 rounded-lg hover:from-red-600 hover:to-pink-700"
         >
-          <div>
-            <select
-              value={selectedTeacher ? selectedTeacher._id : ""}
-              onChange={(e) =>
-                setSelectedTeacher(
-                  teachers.find((teacher) => teacher._id === e.target.value)
-                )
-              }
-              required
-              className="w-full p-2 border rounded-md"
-            >
-              <option value="">Select Teacher</option>
-              {teachers.map((teacher) => (
-                <option key={teacher._id} value={teacher._id}>
-                  {teacher.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          {selectedTeacher && (
-            <div>
-              <input
-                type="text"
-                placeholder="Name"
-                value={selectedTeacher.name}
-                onChange={(e) =>
-                  setSelectedTeacher({
-                    ...selectedTeacher,
-                    name: e.target.value,
-                  })
-                }
-                required
-                className="w-full p-2 border rounded-md"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={selectedTeacher.email}
-                onChange={(e) =>
-                  setSelectedTeacher({
-                    ...selectedTeacher,
-                    email: e.target.value,
-                  })
-                }
-                required
-                className="w-full p-2 border rounded-md"
-              />
-              <button
-                type="submit"
-                className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
-              >
-                Update Teacher
-              </button>
-              <button
-                onClick={handleDeleteTeacher}
-                className="w-full bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
-              >
-                Delete Teacher
-              </button>
-            </div>
-          )}
-        </form>
+          Logout
+        </button>
       </div>
 
-      <button
-        onClick={handleLogout}
-        className="mt-8 w-full bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
-      >
-        Logout
-      </button>
-      <ToastContainer
-        position="top-right"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        pauseOnHover
-        limit={1} // Limit the number of toasts to 1
-        className="custom-toast"
-        style={{
-          fontSize: 14, // Adjust the font size
-          padding: 10, // Add some padding
-          borderRadius: 10, // Add a border radius
-          backgroundColor: "#333", // Change the background color
-          color: "#fff", // Change the text color
-        }}
-      />
+      <ToastContainer />
     </div>
   );
 };
