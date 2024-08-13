@@ -11,6 +11,7 @@ import TeacherDashboard from "./pages/TeacherDashboard.jsx";
 import StudentDashboard from "./pages/StudentDashboard.jsx";
 import Login from "./components/Login.jsx";
 import { ToastContainer } from "react-toastify";
+import "../public/styles/toast.css";
 
 const App = () => {
   const [user, setUser] = useState(null); // Store logged-in user info
@@ -20,17 +21,6 @@ const App = () => {
   }
 
   return (
-    <div>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        pauseOnHover
-      />
       <Router>
         <Routes>
           <Route
@@ -53,7 +43,6 @@ const App = () => {
           <Route path="/login" element={<Login setUser={setUser} />} />
         </Routes>
       </Router>
-    </div>
   );
 };
 

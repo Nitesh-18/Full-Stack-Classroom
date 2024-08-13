@@ -5,9 +5,9 @@ import auth from "../middlewares/authMiddleware.js";
 const router = Router();
 
 // Update student details
-router.put("/update/:id", auth, updateStudent);
+router.put("/update-student/:id", auth, updateStudent);
 
 // Delete a student by ID
-router.delete("/delete/:id", auth, deleteStudent);
+router.delete("/delete-student/:id", auth, deleteStudent);
 
 export default router;

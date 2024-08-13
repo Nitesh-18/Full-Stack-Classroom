@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
 const PrincipalDashboard = () => {
@@ -16,6 +17,7 @@ const PrincipalDashboard = () => {
   const [newTeacherEmail, setNewTeacherEmail] = useState("");
   const [newTeacherPassword, setNewTeacherPassword] = useState("");
   const [token, setToken] = useState(null);
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("authToken");
@@ -100,12 +102,28 @@ const PrincipalDashboard = () => {
           },
         }
       );
-      setClassrooms([...classrooms, response.data]);
+      setClassrooms([...classrooms, response.data]); // Update the classrooms state
       setClassroomName("");
       setStartTime("");
       setEndTime("");
       setDays([]);
-      toast.success("Classroom created successfully!");
+      toast.success("Classroom created successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        newestOnTop: false,
+        closeOnClick: true,
+        rtl: false,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+        style: {
+          fontSize: 14,
+          padding: 10,
+          borderRadius: 10,
+          backgroundColor: "#333",
+          color: "#fff",
+        },
+      });
     } catch (error) {
       console.error("There was an error creating the classroom!", error);
     }
@@ -132,7 +150,23 @@ const PrincipalDashboard = () => {
       setNewTeacherName("");
       setNewTeacherEmail("");
       setNewTeacherPassword("");
-      toast.success("Teacher created successfully!");
+      toast.success("Teacher created successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        newestOnTop: false,
+        closeOnClick: true,
+        rtl: false,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+        style: {
+          fontSize: 14,
+          padding: 10,
+          borderRadius: 10,
+          backgroundColor: "#333",
+          color: "#fff",
+        },
+      });
     } catch (error) {
       if (error.response) {
         console.error("Server error:", error.response.data);
@@ -148,11 +182,10 @@ const PrincipalDashboard = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("authToken");
-      await axios.post(
-        "/api/classrooms/assign-teacher",
+      await axios.put(
+        `/api/users/assign-classroom-to-teacher/${selectedTeacher}`,
         {
           classroomId: selectedClassroom,
-          teacherId: selectedTeacher,
         },
         {
           headers: {
@@ -162,9 +195,191 @@ const PrincipalDashboard = () => {
       );
       setSelectedTeacher("");
       setSelectedClassroom("");
-      toast.success("Teacher assigned to classroom successfully!");
+      toast.success("Teacher assigned to Classroom successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        newestOnTop: false,
+        closeOnClick: true,
+        rtl: false,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+        style: {
+          fontSize: 14,
+          padding: 10,
+          borderRadius: 10,
+          backgroundColor: "#333",
+          color: "#fff",
+        },
+      });
     } catch (error) {
       console.error("There was an error assigning the teacher!", error);
+    }
+  };
+
+  const handleUpdateStudent = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.put(
+        `/api/users/update-student/${selectedStudent._id}`,
+        {
+          name: selectedStudent.name,
+          email: selectedStudent.email,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setStudents(
+        students.map((student) =>
+          student._id === selectedStudent._id ? response.data : student
+        )
+      );
+      setSelectedStudent(null);
+      toast.success("Student updated successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        newestOnTop: false,
+        closeOnClick: true,
+        rtl: false,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+        style: {
+          fontSize: 14,
+          padding: 10,
+          borderRadius: 10,
+          backgroundColor: "#333",
+          color: "#fff",
+        },
+      });
+    } catch (error) {
+      console.error("There was an error updating the student!", error);
+    }
+  };
+
+  const handleDeleteStudent = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("authToken");
+      await axios.delete(`/api/users/delete-student/${selectedStudent._id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setStudents(
+        students.filter((student) => student._id !== selectedStudent._id)
+      );
+      setSelectedStudent(null);
+      toast.success("Student deleted successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        newestOnTop: false,
+        closeOnClick: true,
+        rtl: false,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+        style: {
+          fontSize: 14,
+          padding: 10,
+          borderRadius: 10,
+          backgroundColor: "#333",
+          color: "#fff",
+        },
+      });
+    } catch (error) {
+      console.error("There was an error deleting the student!", error);
+    }
+  };
+
+  const handleUpdateTeacher = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.put(
+        `/api/users/update-teacher/${selectedTeacher._id}`,
+        {
+          name: selectedTeacher.name,
+          email: selectedTeacher.email,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const updatedTeachers = teachers.map((teacher) =>
+        teacher._id === selectedTeacher._id ? response.data : teacher
+      );
+      setTeachers(updatedTeachers);
+      setSelectedTeacher(null);
+      toast.success("Teacher updated successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        newestOnTop: false,
+        closeOnClick: true,
+        rtl: false,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+        style: {
+          fontSize: 14,
+          padding: 10,
+          borderRadius: 10,
+          backgroundColor: "#333",
+          color: "#fff",
+        },
+      });
+    } catch (error) {
+      if (error.response) {
+        console.error("Server error:", error.response.data);
+        toast.error(`Error updating teacher: ${error.response.data.message}`);
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+        toast.error("Error updating teacher: No response received");
+      } else {
+        console.error("Error:", error.message);
+        toast.error(`Error updating teacher: ${error.message}`);
+      }
+    }
+  };
+
+  const handleDeleteTeacher = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("authToken");
+      await axios.delete(`/api/users/delete-teacher/${selectedTeacher._id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setTeachers(
+        teachers.filter((teacher) => teacher._id !== selectedTeacher._id)
+      );
+      setSelectedTeacher(null);
+      toast.success("Teacher deleted successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        newestOnTop: false,
+        closeOnClick: true,
+        rtl: false,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+        style: {
+          fontSize: 14,
+          padding: 10,
+          borderRadius: 10,
+          backgroundColor: "#333",
+          color: "#fff",
+        },
+      });
+    } catch (error) {
+      console.error("There was an error deleting the teacher!", error);
     }
   };
 
@@ -180,7 +395,14 @@ const PrincipalDashboard = () => {
           <ul className="bg-white p-4 rounded-lg shadow">
             {teachers.map((teacher) => (
               <li key={teacher._id} className="border-b py-2">
-                {teacher.name}
+                {teacher.name}{" "}
+                {teacher.classroomId
+                  ? `(${
+                      classrooms.find(
+                        (classroom) => classroom._id === teacher.classroomId
+                      ).name
+                    })`
+                  : ""}
               </li>
             ))}
           </ul>
@@ -345,12 +567,171 @@ const PrincipalDashboard = () => {
         </form>
       </div>
 
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Update/Delete Student</h2>
+        <form
+          onSubmit={handleUpdateStudent}
+          className="bg-white p-6 rounded-lg shadow-md space-y-4"
+        >
+          <div>
+            <select
+              value={selectedStudent ? selectedStudent._id : ""}
+              onChange={(e) =>
+                setSelectedStudent(
+                  students.find((student) => student._id === e.target.value)
+                )
+              }
+              required
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="">Select Student</option>
+              {students.map((student) => (
+                <option key={student._id} value={student._id}>
+                  {student.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          {selectedStudent && (
+            <div>
+              <input
+                type="text"
+                placeholder="Name"
+                value={selectedStudent.name}
+                onChange={(e) =>
+                  setSelectedStudent({
+                    ...selectedStudent,
+                    name: e.target.value,
+                  })
+                }
+                required
+                className="w-full p-2 border rounded-md"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={selectedStudent.email}
+                onChange={(e) =>
+                  setSelectedStudent({
+                    ...selectedStudent,
+                    email: e.target.value,
+                  })
+                }
+                required
+                className="w-full p-2 border rounded-md"
+              />
+              <button
+                type="submit"
+                className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+              >
+                Update Student
+              </button>
+              <button
+                onClick={handleDeleteStudent}
+                className="w-full bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
+              >
+                Delete Student
+              </button>
+            </div>
+          )}
+        </form>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Update/Delete Teacher</h2>
+        <form
+          onSubmit={handleUpdateTeacher}
+          className="bg-white p-6 rounded-lg shadow-md space-y-4"
+        >
+          <div>
+            <select
+              value={selectedTeacher ? selectedTeacher._id : ""}
+              onChange={(e) =>
+                setSelectedTeacher(
+                  teachers.find((teacher) => teacher._id === e.target.value)
+                )
+              }
+              required
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="">Select Teacher</option>
+              {teachers.map((teacher) => (
+                <option key={teacher._id} value={teacher._id}>
+                  {teacher.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          {selectedTeacher && (
+            <div>
+              <input
+                type="text"
+                placeholder="Name"
+                value={selectedTeacher.name}
+                onChange={(e) =>
+                  setSelectedTeacher({
+                    ...selectedTeacher,
+                    name: e.target.value,
+                  })
+                }
+                required
+                className="w-full p-2 border rounded-md"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={selectedTeacher.email}
+                onChange={(e) =>
+                  setSelectedTeacher({
+                    ...selectedTeacher,
+                    email: e.target.value,
+                  })
+                }
+                required
+                className="w-full p-2 border rounded-md"
+              />
+              <button
+                type="submit"
+                className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+              >
+                Update Teacher
+              </button>
+              <button
+                onClick={handleDeleteTeacher}
+                className="w-full bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
+              >
+                Delete Teacher
+              </button>
+            </div>
+          )}
+        </form>
+      </div>
+
       <button
         onClick={handleLogout}
         className="mt-8 w-full bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
       >
         Logout
       </button>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        pauseOnHover
+        limit={1} // Limit the number of toasts to 1
+        className="custom-toast"
+        style={{
+          fontSize: 14, // Adjust the font size
+          padding: 10, // Add some padding
+          borderRadius: 10, // Add a border radius
+          backgroundColor: "#333", // Change the background color
+          color: "#fff", // Change the text color
+        }}
+      />
     </div>
   );
 };
