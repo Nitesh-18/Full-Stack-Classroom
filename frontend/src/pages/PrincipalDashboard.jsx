@@ -315,7 +315,7 @@ const PrincipalDashboard = () => {
       const updatedTeachers = teachers.map((teacher) =>
         teacher._id === selectedTeacher._id ? response.data : teacher
       );
-      setTeachers(updatedTeachers);
+      setTeachers(updatedTeachers); // Update the teachers state
       setSelectedTeacher(null);
       toast.success("Teacher updated successfully!", {
         position: "top-center",
@@ -659,6 +659,75 @@ const PrincipalDashboard = () => {
         </form>
       </div>
 
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Update/Delete Teacher</h2>
+        <form
+          onSubmit={handleUpdateTeacher}
+          className="bg-white p-6 rounded-lg shadow-md space-y-4"
+        >
+          <div>
+            <select
+              value={selectedTeacher ? selectedTeacher._id : ""}
+              onChange={(e) =>
+                setSelectedTeacher(
+                  teachers.find((teacher) => teacher._id === e.target.value)
+                )
+              }
+              required
+              className="w-full p-2 border rounded-md"
+            >
+              <option value="">Select Teacher</option>
+              {teachers.map((teacher) => (
+                <option key={teacher._id} value={teacher._id}>
+                  {teacher.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          {selectedTeacher && (
+            <div>
+              <input
+                type="text"
+                placeholder="Name"
+                value={selectedTeacher.name}
+                onChange={(e) =>
+                  setSelectedTeacher({
+                    ...selectedTeacher,
+                    name: e.target.value,
+                  })
+                }
+                required
+                className="w-full p-2 border rounded-md"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={selectedTeacher.email}
+                onChange={(e) =>
+                  setSelectedTeacher({
+                    ...selectedTeacher,
+                    email: e.target.value,
+                  })
+                }
+                required
+                className="w-full p-2 border rounded-md"
+              />
+              <button
+                type="submit"
+                className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+              >
+                Update Teacher
+              </button>
+              <button
+                onClick={handleDeleteTeacher}
+                className="w-full bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
+              >
+                Delete Teacher
+              </button>
+            </div>
+          )}
+        </form>
+      </div>
       <ToastContainer />
     </div>
   );
