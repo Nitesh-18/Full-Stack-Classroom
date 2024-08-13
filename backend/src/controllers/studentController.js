@@ -1,5 +1,5 @@
-const express = require("express");
-const Student = require("../models/User.js"); // Assuming Student is part of the User model
+import express from 'express';
+import {User} from '../models/User.js'
 
 const updateStudent = async (req, res) => {
   try {

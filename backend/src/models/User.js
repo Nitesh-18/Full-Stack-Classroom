@@ -28,6 +28,9 @@ const userSchema = mongoose.Schema(
       ref: "Classroom",
       default: null,
     },
+    refreshToken: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
@@ -43,6 +46,25 @@ userSchema.pre("save", async function (next) {
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+userSchema.methods.generateRefreshToken = function () {
+  try {
+    const token = jwt.sign(
+      {
+        _id: this._id,
+      },
+      process.env.REFRESH_TOKEN_SECRET,
+      {
+        expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+      }
+    );
+    console.log("Refresh token generated successfully:", token);
+    return token;
+  } catch (error) {
+    console.error("Error generating refresh token:", error);
+    throw new error("Error in generating refresh token", error.message);
+  }
 };
 
 export const User = mongoose.model("User", userSchema);

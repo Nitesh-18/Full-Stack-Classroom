@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { updateStudent, deleteStudent } from "../controllers/studentController";
-import auth from "../middlewares/authMiddleware";
+import { updateStudent, deleteStudent } from "../controllers/studentController.js";
+import auth from "../middlewares/authMiddleware.js";
 
 const router = Router();
 

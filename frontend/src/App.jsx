@@ -18,7 +18,7 @@ const App = () => {
     // Automatically check if the user is already logged in when the app starts
     const checkLoginStatus = async () => {
       try {
-        const response = await axios.get("/api/auth/protected"); // Assuming you have this endpoint
+        const response = await axios.get("/api/protected"); // Assuming you have this endpoint
         setUser(response.data);
       } catch (error) {
         console.error("Error checking login status", error);
