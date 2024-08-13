@@ -385,9 +385,18 @@ const PrincipalDashboard = () => {
 
   return (
     <div className="container mx-auto p-6 bg-gray-50 rounded-md shadow-lg">
-      <h1 className="text-3xl font-bold mb-8 text-center text-blue-700">
-        Principal Dashboard
-      </h1>
+      {/* Navbar */}
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-blue-700">
+          Principal Dashboard
+        </h1>
+        <button
+          onClick={handleLogout}
+          className="bg-gradient-to-r from-red-500 to-pink-600 text-white p-3 rounded-lg hover:from-red-600 hover:to-pink-700"
+        >
+          Logout
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
@@ -648,15 +657,6 @@ const PrincipalDashboard = () => {
             </div>
           )}
         </form>
-      </div>
-
-      <div className="mt-8">
-        <button
-          onClick={handleLogout}
-          className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white p-3 rounded-lg hover:from-red-600 hover:to-pink-700"
-        >
-          Logout
-        </button>
       </div>
 
       <ToastContainer />
