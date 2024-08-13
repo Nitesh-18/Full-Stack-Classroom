@@ -2,8 +2,6 @@ import dotenv from "dotenv";
 dotenv.config({
   path: "./.env",
 });
-import express, { json } from "express";
-import cors from "cors";
 import { app } from "./app.js";
 import connectDB from "./db/database.js";
 
