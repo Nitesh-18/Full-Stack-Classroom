@@ -34,7 +34,7 @@ const registerUser = async (req, res) => {
       },
     };
 
-    jwt.sign(
+     jwt.sign(
       payload,
       process.env.JWT_SECRET,
       { expiresIn: "1h" },
@@ -45,7 +45,7 @@ const registerUser = async (req, res) => {
     );
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Server error");
+    res.status(500).cookie("accessToken",token).send("Server error");
   }
 };
 
@@ -87,10 +87,11 @@ const loginUser = async (req, res) => {
         res.json({ token });
       }
     );
+    const refreshToken = user.generateRefreshToken();
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Server error");
-  }
+    res.status(500).cookie("refreshToken",refreshToken).send("Server error");
+  };
 };
 
 export { registerUser, loginUser };
