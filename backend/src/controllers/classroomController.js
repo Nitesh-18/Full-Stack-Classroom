@@ -80,7 +80,7 @@ const assignStudent = async (req, res) => {
     // Initialize the students array if it doesn't exist
     if (!classroom.students) {
       classroom.students = [];
-    };
+    }
 
     classroom.students.push(student._id);
     await classroom.save();
@@ -98,21 +98,59 @@ const classroomDataFetch = async (req, res) => {
     const teacherId = req.user.id; // Assuming `authMiddleware` adds the logged-in user's id to `req.user`
 
     // Find the classroom assigned to this teacher
-    const classroom = await Classroom.findOne({ teacherId }).populate("teacherId", "name");
+    const classroom = await Classroom.findOne({ teacherId }).populate(
+      "teacherId",
+      "name"
+    );
 
     if (!classroom) {
-      return res.status(404).json({ message: "No classroom assigned to this teacher" });
+      return res
+        .status(404)
+        .json({ message: "No classroom assigned to this teacher" });
     }
 
     // Find all students in this classroom
-    const students = await User.find({ role: "Student", classroomId: classroom._id }, "name age");
+    const students = await User.find(
+      { role: "Student", classroomId: classroom._id },
+      "name age"
+    );
 
     res.json({ classroom, students });
   } catch (error) {
     console.error("Error fetching classroom and students:", error);
     res.status(500).json({ message: "Server error" });
-  };
+  }
 };
 
+// Controller function to fetch students by the classroom assigned to the logged-in teacher
+const fetchStudentsFromAssignedClassroom = async (req, res) => {
+  try {
+    const { classroomId } = req.params;
 
-export { createClassroom, assignStudent, assignTeacher, getClassrooms , classroomDataFetch};
+    // Find students with the specified classroomId and role 'Student'
+    const students = await User.find({
+      classroom: classroomId,
+      role: "Student",
+    });
+
+    if (!students.length) {
+      return res
+        .status(404)
+        .json({ message: "No students found for this classroom." });
+    }
+
+    res.status(200).json(students);
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export {
+  createClassroom,
+  assignStudent,
+  assignTeacher,
+  getClassrooms,
+  classroomDataFetch,
+  fetchStudentsFromAssignedClassroom,
+};

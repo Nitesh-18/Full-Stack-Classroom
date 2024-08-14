@@ -5,10 +5,10 @@ import {
   assignTeacher,
   assignStudent,
   classroomDataFetch,
+  fetchStudentsFromAssignedClassroom,
 } from "../controllers/classroomController.js";
 
 import auth from "../middlewares/authMiddleware.js";
-
 
 const router = express.Router();
 
@@ -25,5 +25,11 @@ router.post("/assign-teacher", auth, assignTeacher);
 router.post("/assign-student", auth, assignStudent);
 
 router.get("/teacher-classroom", auth, classroomDataFetch);
+
+router.get(
+  "/classroom/:classroomId",
+  auth,
+  fetchStudentsFromAssignedClassroom
+);
 
 export default router;

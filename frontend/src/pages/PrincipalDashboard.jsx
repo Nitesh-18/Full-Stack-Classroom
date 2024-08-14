@@ -312,10 +312,27 @@ const PrincipalDashboard = () => {
           },
         }
       );
+
+      // Update the teacher in the teachers array
       const updatedTeachers = teachers.map((teacher) =>
         teacher._id === selectedTeacher._id ? response.data : teacher
       );
+
       setTeachers(updatedTeachers); // Update the teachers state
+
+      // Update the classrooms state if the teacher is associated with a classroom
+      if (selectedTeacher.classroomId) {
+        const updatedClassrooms = classrooms.map((classroom) =>
+          classroom._id === selectedTeacher.classroomId
+            ? {
+                ...classroom,
+                teacherName: response.data.name, // or however you're displaying the teacher's name
+              }
+            : classroom
+        );
+        setClassrooms(updatedClassrooms);
+      }
+
       setSelectedTeacher(null);
       toast.success("Teacher updated successfully!", {
         position: "top-center",
@@ -402,21 +419,19 @@ const PrincipalDashboard = () => {
         <div>
           <h2 className="text-xl font-semibold mb-4 text-gray-800">Teachers</h2>
           <ul className="bg-white p-6 rounded-lg shadow-lg space-y-4">
-            {teachers.map((teacher) => (
-              <li
-                key={teacher._id}
-                className="border p-4 rounded-lg bg-gray-100 hover:bg-gray-200"
-              >
-                {teacher.name}{" "}
-                {teacher.classroomId
-                  ? `(${
-                      classrooms.find(
-                        (classroom) => classroom._id === teacher.classroomId
-                      ).name
-                    })`
-                  : ""}
-              </li>
-            ))}
+            {teachers.map((teacher) => {
+              const classroom = classrooms.find(
+                (classroom) => classroom._id === teacher.classroomId
+              );
+              return (
+                <li
+                  key={teacher._id}
+                  className="border p-4 rounded-lg bg-gray-100 hover:bg-gray-200"
+                >
+                  {teacher.name} {classroom ? `(${classroom.name})` : ""}
+                </li>
+              );
+            })}
           </ul>
         </div>
 
@@ -477,7 +492,7 @@ const PrincipalDashboard = () => {
               placeholder="Days (e.g., Monday, Tuesday)"
               value={days.join(", ")}
               onChange={(e) =>
-                setDays(e.target.value.split(", ").map((day) => day.trim()))
+                setDays(e.target.value.split(",").map((day) => day.trim()))
               }
               required
               className="w-full p-3 border rounded-lg"
@@ -668,11 +683,12 @@ const PrincipalDashboard = () => {
           <div>
             <select
               value={selectedTeacher ? selectedTeacher._id : ""}
-              onChange={(e) =>
-                setSelectedTeacher(
-                  teachers.find((teacher) => teacher._id === e.target.value)
-                )
-              }
+              onChange={(e) => {
+                const teacher = teachers.find(
+                  (teacher) => teacher._id === e.target.value
+                );
+                setSelectedTeacher(teacher || {});
+              }}
               required
               className="w-full p-2 border rounded-md"
             >
@@ -684,12 +700,12 @@ const PrincipalDashboard = () => {
               ))}
             </select>
           </div>
-          {selectedTeacher && (
+          {selectedTeacher && selectedTeacher._id && (
             <div>
               <input
                 type="text"
                 placeholder="Name"
-                value={selectedTeacher.name}
+                value={selectedTeacher.name || ""}
                 onChange={(e) =>
                   setSelectedTeacher({
                     ...selectedTeacher,
@@ -702,7 +718,7 @@ const PrincipalDashboard = () => {
               <input
                 type="email"
                 placeholder="Email"
-                value={selectedTeacher.email}
+                value={selectedTeacher.email || ""}
                 onChange={(e) =>
                   setSelectedTeacher({
                     ...selectedTeacher,
@@ -719,6 +735,7 @@ const PrincipalDashboard = () => {
                 Update Teacher
               </button>
               <button
+                type="button"
                 onClick={handleDeleteTeacher}
                 className="w-full bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
               >
@@ -728,6 +745,7 @@ const PrincipalDashboard = () => {
           )}
         </form>
       </div>
+
       <ToastContainer />
     </div>
   );
